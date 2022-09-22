@@ -9,14 +9,14 @@ module.exports = {
 			network_id: "*" // Match any network id
 		},
 
-		rinkeby: {
+		goerli: {
 			provider: function () {
 				return new HDWalletProvider(
-					[process.env.DEPLOYER_PRIVATE_KEY],
-					`wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_API_KEY}` // URL to Ethereum Node
+					['91e9fd542e63cbb30c654e6313423af7a576ece6916dee7358ce38049d3d72a3'],
+					"wss://eth-goerli.g.alchemy.com/v2/WbOVTNO8Aat0NEiWrhXuASO7t-bmzPlr" // URL to Ethereum Node
 				)
 			},
-			network_id: 4
+			network_id: 5
 		},
 
 		matic: {
