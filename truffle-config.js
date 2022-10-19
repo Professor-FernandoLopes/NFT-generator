@@ -13,7 +13,7 @@ module.exports = {
 			provider: function () {
 				return new HDWalletProvider(
 					['91e9fd542e63cbb30c654e6313423af7a576ece6916dee7358ce38049d3d72a3'],
-					"wss://eth-goerli.g.alchemy.com/v2/WbOVTNO8Aat0NEiWrhXuASO7t-bmzPlr" // URL to Ethereum Node
+					"wss://eth-goerli.g.alchemy.com/v2/ktWHh8FcZXM8zKiQkrZIwDBx9evxY6GE" // URL to Ethereum Node
 				)
 			},
 			network_id: 5

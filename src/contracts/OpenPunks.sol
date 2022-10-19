@@ -1451,15 +1451,15 @@ contract OpenPunks is ERC721Enumerable, Ownable {
         return baseURI;
     }
 
-    // public
+    // está função está determinada a mintar apenas 1 token
     function mint(uint256 _mintAmount) public payable {
         require(
             block.timestamp >= timeDeployed + allowMintingAfter,
             "Minting now allowed yet"
         );
-
+// permite que cada um possa mintar apenas 1 NFT
         require(balanceOf(msg.sender) == 0, "Only 1 mint per account");
-
+        
         uint256 supply = totalSupply();
         require(!isPaused);
         require(_mintAmount > 0);
@@ -1538,17 +1538,19 @@ contract OpenPunks is ERC721Enumerable, Ownable {
         maxMintAmount = _newmaxMintAmount;
     }
 
+// fixa o not revealed uri
     function setNotRevealedURI(string memory _notRevealedURI) public onlyOwner {
         notRevealedUri = _notRevealedURI;
     }
 
+// fixa o uri
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
         baseURI = _newBaseURI;
     }
 
     function setBaseExtension(string memory _newBaseExtension)
         public
-        onlyOwner
+        onlyOwner 
     {
         baseExtension = _newBaseExtension;
     }

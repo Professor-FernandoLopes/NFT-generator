@@ -6,11 +6,12 @@ const Navbar = ({ web3Handler, account, explorerURL }) => {
             <a
                 className="navbar-brand col-sm-3 col-md-2 mr-0 mx-4"
                 href="https://www.defiuniversity.com.br/"
+            
                 target="_blank"
                 rel="noopener noreferrer"
             >
                 
-                DeFi University
+                MÉDICOS
             </a>
 
             {account ? (

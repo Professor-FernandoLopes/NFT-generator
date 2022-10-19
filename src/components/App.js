@@ -14,10 +14,16 @@ import '../App.css'
 import Navbar from './Navbar'
 
 // Import ABI + Config
-import OpenPunks from '../abis/OpenPunks.json'
+// Só trocar o json e interagir com as funções do contrato
+import OpenPunks from '../abis/Medicos.json'
+// tem um arquivo de configuração de redes aqui
 import config from '../config.json'
 
 function App() {
+
+const address = "0x4572B9fEE230D16a3A0E9Da543D011b18b4Bb366"
+const network_id = 5
+
 const [web3, setWeb3] = useState(null)
 const [openPunks, setOpenPunks] = useState(null)
 
@@ -40,20 +46,24 @@ const [revealTime, setRevealTime] = useState(0)
 const [counter, setCounter] = useState(7)
 const [isCycling, setIsCycling] = useState(false)
 
+// função será chamada abaixo
 const loadBlockchainData = async (_web3, _account, _networkId) => {
 // Fetch Contract, Data, etc.
-try {
-const openPunks = new _web3.eth.Contract(OpenPunks.abi, OpenPunks.networks[_networkId].address)
+
+// try {
+// openPunks.abi não precisa mexer
+// e o segundo argumento substitui pelo address
+const openPunks = new _web3.eth.Contract(OpenPunks.abi, address)
 setOpenPunks(openPunks)
 
-const maxSupply = await openPunks.methods.maxSupply().call()
-const totalSupply = await openPunks.methods.totalSupply().call()
-setSupplyAvailable(maxSupply - totalSupply)
+//const maxSupply = await openPunks.methods.maxSupply().call()
+//const totalSupply = await openPunks.methods.totalSupply().call()
+//setSupplyAvailable(maxSupply - totalSupply)
 
-const allowMintingAfter = await openPunks.methods.allowMintingAfter().call()
-const timeDeployed = await openPunks.methods.timeDeployed().call()
-setRevealTime((Number(timeDeployed) + Number(allowMintingAfter)).toString() + '000')
-
+//const allowMintingAfter = await openPunks.methods.allowMintingAfter().call()
+//const timeDeployed = await openPunks.methods.timeDeployed().call()
+//setRevealTime((Number(timeDeployed) + Number(allowMintingAfter)).toString() + '000')
+/*
 if (_account) {
 const ownerOf = await openPunks.methods.walletOfOwner(_account).call()
 setOwnerOf(ownerOf)
@@ -65,8 +75,11 @@ setOwnerOf([])
 setIsError(true)
 setMessage("Contract not deployed to current network, please change network in MetaMask")
 }
+
+*/
 }
 
+// AQUI TUDO COMEÇA
 const loadWeb3 = async () => {
 if (typeof window.ethereum !== 'undefined') {
 const web3 = new Web3(window.ethereum)
@@ -84,17 +97,23 @@ const networkId = await web3.eth.net.getId()
 setNetworkId(networkId)
 
 if (networkId !== 5777) {
+
+// passa o networkId que veio do web3
+// dependendo do networkId passa o url correspondente
 setExplorerURL(config.NETWORKS[networkId].explorerURL)
 setOpenseaURL(config.NETWORKS[networkId].openseaURL)
 }
 
+// chama a função criada acima com os respectivos parâmetros e passa o valor concreto destes
 await loadBlockchainData(web3, accounts[0], networkId)
 
+// modificou a conta, então set nova conta
 window.ethereum.on('accountsChanged', function (accounts) {
 setAccount(accounts[0])
 setMessage(null)
 })
 
+// modificou a rede, set nova rede
 window.ethereum.on('chainChanged', (chainId) => {
 // Handle the new chain.
 // Correctly handling chain changes can be complicated.
@@ -105,6 +124,7 @@ window.location.reload();
 }
 
 // MetaMask Login/Connect
+// será chamado onClick no botão do navbar
 const web3Handler = async () => {
 if (web3) {
 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -112,7 +132,10 @@ setAccount(accounts[0])
 }
 }
 
+// será chamada mediante onClick
 const mintNFTHandler = async () => {
+
+/*
 if (revealTime > new Date().getTime()) {
 window.alert('Minting is not live yet!')
 return
@@ -122,30 +145,38 @@ if (ownerOf.length > 0) {
 window.alert('You\'ve already minted!')
 return
 }
-
+*/
 // Mint NFT
 if (openPunks && account) {
 setIsMinting(true)
 setIsError(false)
 
-await openPunks.methods.mint(1).send({ from: account, value: 0 })
-.on('confirmation', async () => {
-const maxSupply = await openPunks.methods.maxSupply().call()
-const totalSupply = await openPunks.methods.totalSupply().call()
-setSupplyAvailable(maxSupply - totalSupply)
+// verificar o método mint no smart contract
+// function mint(address _to, uint256[] memory _ids,uint256[] memory _amounts, bytes memory _data ) public {}
 
-const ownerOf = await openPunks.methods.walletOfOwner(account).call()
-setOwnerOf(ownerOf)
+await openPunks.methods.mint(account,[0],[1,1,1],'0xd9b67a26').send({ from: account, value: 0 }).on('confirmation', async () => {
+
+//const maxSupply = await openPunks.methods.maxSupply().call()
+
+// setSupplyAvailable
+//const totalSupply = await openPunks.methods.totalSupply().call()
+//setSupplyAvailable(maxSupply - totalSupply)
+
+
+//const ownerOf = await openPunks.methods.walletOfOwner(account).call()
+//setOwnerOf(ownerOf)
 })
 .on('error', (error) => {
 window.alert(error)
 setIsError(true)
 })
+
 }
 
 setIsMinting(false)
 }
 
+// aqui parece ser a questão da busca pelas imagens no ipfs
 const cycleImages = async () => {
 const getRandomNumber = () => {
 const counter = (Math.floor(Math.random() * 1000)) + 1
@@ -169,8 +200,8 @@ return (
 
 <Row className='header my-3 p-3 mb-0 pb-0'>
 <Col xs={12} md={12} lg={8} xxl={8}>
-<h1>Defi Punks</h1>
-<p className='sub-header'>Disponível em 06 / 10 / 22</p>
+<h1>Médicos</h1>
+{/*<p className='sub-header'>Disponível em 06 / 10 / 22</p>*/}
 </Col>
 <Col className='flex social-icons'>
 <a
@@ -203,13 +234,13 @@ className='showcase'
 />
 </Col>
 <Col md={5} lg={4} xl={5} xxl={4}>
-{revealTime !== 0 && <Countdown date={currentTime + (revealTime - currentTime)} className='countdown mx-3' />}
-<p className='text'>
+{/*revealTime !== 0 && <Countdown date={currentTime + (revealTime - currentTime)} className='countdown mx-3' />*/}
+{/*<p className='text'>
 Participe da masterclass DeFi University NFT para receber o código completo desta aplicação, 
 criada com solidity e reactJs, aprender como colocá-la no ar e como 
 customizá-la para criação programada de qualquer coleção de NFT, 
 de obras de arte à contratos. 
-</p>
+</p> */}
 <a href="#about" className='button mx-3'>Learn More!</a>
 </Col>
 </Row>
@@ -227,14 +258,16 @@ de obras de arte à contratos.
 <p>{message}</p>
 ) : (
 <div>
+
+
 <h3>Mint seu NFT in</h3>
 {revealTime !== 0 && <Countdown date={currentTime + (revealTime - currentTime)} className='countdown' />}
-<ul>
+{ /* <ul>
 	<li>Aprenda a gerar 1000 nfts usando um art generator</li>
 	<li>Customize para tokenização programada de contratos</li>
 	<li>Veja os nfts mintados no Opensea logo após o minting</li>
 </ul>
-
+*/}
 {isMinting ? (
 	<Spinner animation="border" className='p-3 m-2' />
 ) : (
